@@ -1,3 +1,3 @@
-module github.com/victorosts/go-service
+module go-service
 
 go 1.26.4
