@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-service/internal/data_structure/array"
 	"go-service/internal/data_structure/basic"
+	"go-service/internal/data_structure/maps"
 	"go-service/internal/data_structure/slice"
 	"go-service/internal/data_structure/structs"
 	"go-service/internal/function"
@@ -60,4 +61,6 @@ func main() {
 	for _, user := range users {
 		fmt.Printf("- User data -\nID: %d | Name: %s\n", user.ID, user.Name)
 	}
+
+	maps.CreateMap()
 }
