@@ -5,6 +5,7 @@ import (
 	"go-service/internal/data_structure/array"
 	"go-service/internal/data_structure/basic"
 	"go-service/internal/data_structure/slice"
+	"go-service/internal/data_structure/structs"
 	"go-service/internal/function"
 	"go-service/internal/operators"
 )
@@ -50,4 +51,13 @@ func main() {
 	fmt.Printf("MSG: %v\n", msg2)
 	res2, _ := function.WithMultipleReturn(87, 347)
 	fmt.Printf("RES: %d\n", res2)
+
+	structs.GenerateUser("Jamal")
+	structs.GenerateUser("Josue")
+
+	users := structs.GetUsers()
+
+	for _, user := range users {
+		fmt.Printf("- User data -\nID: %d | Name: %s\n", user.ID, user.Name)
+	}
 }
