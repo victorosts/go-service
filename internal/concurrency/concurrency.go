@@ -109,3 +109,61 @@ func BuffChannels3() {
 		fmt.Printf("Channel %d\n", v)
 	}
 }
+
+func worker(jobs <-chan string, workerId int, outputs chan<- string) {
+	for job := range jobs {
+		result := fmt.Sprintf("Rodando o job: %s | worker num: %d", job, workerId)
+
+		if outputs != nil {
+			outputs <- result
+		} else {
+			fmt.Println(result)
+		}
+	}
+}
+
+func FanOut() {
+	jobs := make(chan string)
+
+	for i := range 4 {
+		// worker
+		go worker(jobs, i, nil)
+	}
+
+	// Apenas gerando os jobs
+	for j := range 12 {
+		jobs <- fmt.Sprintf("job-%d", j)
+	}
+}
+
+func FanIn() {
+	var wg sync.WaitGroup
+
+	jobs := make(chan string)
+	outputs := make(chan string)
+
+	for i := range 5 {
+		wg.Add(1)
+		go func(n int) {
+			defer wg.Done()
+			worker(jobs, n, outputs)
+		}(i)
+	}
+
+	go func() {
+		for j := range 12 {
+			jobs <- fmt.Sprintf("job-%d", j)
+		}
+
+		close(jobs)
+	}()
+
+	go func() {
+		wg.Wait()
+		close(outputs)
+	}()
+
+	for output := range outputs {
+		fmt.Println(output)
+	}
+}
