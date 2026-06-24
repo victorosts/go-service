@@ -157,6 +157,7 @@ func FanIn() {
 
 	go func() {
 		for j := range 12 {
+			time.Sleep(1 * time.Second)
 			jobs <- fmt.Sprintf("job-%d", j)
 		}
 
