@@ -3,6 +3,7 @@ package concurrency
 import (
 	"fmt"
 	"sync"
+	"time"
 )
 
 func FireAndForget() {
@@ -112,7 +113,11 @@ func BuffChannels3() {
 
 func worker(jobs <-chan string, workerId int, outputs chan<- string) {
 	for job := range jobs {
-		result := fmt.Sprintf("Rodando o job: %s | worker num: %d", job, workerId)
+		fmt.Printf("Executando o job %s no worker %d\n", job, workerId)
+
+		time.Sleep(2 * time.Second)
+
+		result := fmt.Sprintf("Job %s finalizado no worker %d", job, workerId)
 
 		if outputs != nil {
 			outputs <- result
@@ -142,7 +147,7 @@ func FanIn() {
 	jobs := make(chan string)
 	outputs := make(chan string)
 
-	for i := range 5 {
+	for i := range 4 {
 		wg.Add(1)
 		go func(n int) {
 			defer wg.Done()
