@@ -1,6 +1,7 @@
 package concurrency
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"time"
@@ -172,4 +173,58 @@ func FanIn() {
 	for output := range outputs {
 		fmt.Println(output)
 	}
+}
+
+func ContextCancel() {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+				fmt.Println("Executando")
+			}
+		}
+	}()
+
+	time.Sleep(10 * time.Microsecond)
+
+	cancel()
+}
+
+func SelectWithTimeout() {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	ch1 := make(chan string)
+	ch2 := make(chan string)
+
+	go func() {
+		for {
+			select {
+			case msg := <-ch1:
+				fmt.Printf("Mensagem do canal 1: %s\n", msg)
+			case msg := <-ch2:
+				fmt.Printf("Mensagem do canal 2: %s\n", msg)
+			case <-time.After(1 * time.Second):
+				cancel()
+			}
+		}
+	}()
+
+	go func() {
+		for i := range 5 {
+			ch1 <- fmt.Sprintf("channel 1 -> item %d", i)
+		}
+	}()
+
+	go func() {
+		for i := range 5 {
+			ch2 <- fmt.Sprintf("channel 2 -> item %d", i)
+		}
+	}()
+
+	<-ctx.Done()
+	fmt.Println("Tarefa finalizada")
 }

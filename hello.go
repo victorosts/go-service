@@ -9,5 +9,5 @@ func main() {
 
 	// concurrency.WgGroupLoop()
 
-	concurrency.FanIn()
+	concurrency.SelectWithTimeout()
 }
